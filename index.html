@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+<meta charset="UTF-8">
+<title>כניסה לטופס</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  text-align: center;
+  padding-top: 100px;
+}
+
+.box {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 300px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+#error {
+  color: red;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>כניסה לטופס</h2>
+  <p>נא להזין תעודת זהות</p>
+
+  <input type="text" id="idInput" placeholder="תעודת זהות">
+  <button onclick="checkID()">כניסה</button>
+
+  <p id="error"></p>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyrAO8zvBpJcgBEtfh-saJDYCFjpVdalgfFv5Dv99dg7AZmsQ5NcB9Pi8SBmrig-nzIGA/exec";
+const FORM_URL = "https://forms.gle/RyPkWPgSmk6GxdETA";
+
+async function checkID() {
+  const id = document.getElementById("idInput").value.trim();
+
+  if (!/^\d{9}$/.test(id)) {
+    document.getElementById("error").innerText = "יש להזין 9 ספרות";
+    return;
+  }
+
+  document.getElementById("error").innerText = "בודק...";
+
+  try {
+    const response = await fetch(`${API_URL}?id=${id}`);
+    const result = await response.text();
+
+    if (result === "OK") {
+      // מעבר לטופס + העברת ת"ז
+      window.location.href = FORM_URL + "?entry.123456789=" + id;
+    } else {
+      document.getElementById("error").innerText = "תעודת זהות לא נמצאה";
+    }
+  } catch (e) {
+    document.getElementById("error").innerText = "שגיאה בחיבור לשרת";
+  }
+}
+</script>
+
+</body>
+</html>
